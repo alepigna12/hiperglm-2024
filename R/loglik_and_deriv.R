@@ -2,11 +2,7 @@ calc_loglik <- function(model, reg_coef, ...) {
   UseMethod("calc_loglik")
 }
 
-calc_grad <- function(model, reg_coef, ...) {
-  UseMethod("calc_grad")
-}
-
-calc_loglink_deriv <- function(model, reg_coef, order) {
+calc_loglink_deriv <- function(model, reg_coef, order, ...) {
   UseMethod("calc_loglink_deriv")
 }
 
@@ -18,13 +14,14 @@ calc_loglik.linear_model <- function(model, reg_coef, noise_var = 1) {
   return(loglik)
 }
 
-calc_grad.linear_model <- function(model, reg_coef, noise_var = 1) {
-  outcome <- model$outcome
-  design <- model$design
-  predicted_val <- design %*% reg_coef
-  grad <- t(design) %*% (outcome - predicted_val) / noise_var
-  grad <- as.vector(grad)
-  return(grad)
+calc_loglink_deriv.linear_model <- function(model, reg_coef, order, noise_var = 1) {
+  if (order > 1) {
+    stop("2nd+ order derivative calculations are not supported for linear models")
+  }
+  predicted_val <- model$design %*% reg_coef
+  deriv <- (model$outcome - predicted_val) / noise_var
+  deriv <- as.vector(deriv)
+  return(deriv)
 }
 
 calc_loglik.logit_model <- function(model, reg_coef) {
@@ -41,14 +38,6 @@ calc_loglik.logit_model <- function(model, reg_coef) {
   loglik <- sum(n_success * logit_prob - n_trial * log(1 + exp(logit_prob)))
     # TODO: improve numerical stability for logit_prob >> 1
   return(loglik)
-}
-
-calc_grad.logit_model <- function(model, reg_coef) {
-  design <- model$design
-  loglink_grad <- calc_loglink_deriv(model, reg_coef, order = 1)
-  grad <- t(design) %*% loglink_grad
-  grad <- as.vector(grad)
-  return(grad)
 }
 
 calc_loglink_deriv.logit_model <- function(model, reg_coef, order) {
@@ -68,10 +57,18 @@ calc_loglink_deriv.logit_model <- function(model, reg_coef, order) {
   } else if (order == 2) {
     deriv <- n_trial * predicted_prob * (1 - predicted_prob)
   } else {
-    stop("3rd+ order derivative calculations are not supported")
+    stop("3rd+ order derivative calculations are not supported for logistic models")
   }
   deriv <- as.vector(deriv)
   return(deriv)
+}
+
+calc_grad <- function(model, reg_coef, ...) {
+  design <- model$design
+  loglink_grad <- calc_loglink_deriv(model, reg_coef, order = 1, ...)
+  grad <- t(design) %*% loglink_grad
+  grad <- as.vector(grad)
+  return(grad)
 }
 
 calc_hessian <- function(model, reg_coef) {
