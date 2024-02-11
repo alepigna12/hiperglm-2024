@@ -28,12 +28,13 @@ test_that("vanilla/weighted least-sq Newton updates coincide", {
   n_obs <- 32; n_pred <- 4
   data <- simulate_data(n_obs, n_pred, model_name = 'logit', seed = 1918)
   design <- data$design; outcome <- data$outcome
+  logit_model <- new_regression_model(design, outcome, model_name = 'logit')
   set.seed(615)
   init_coef <- rnorm(n_pred)
   wls_updated_coef <- 
-    take_one_newton_step(init_coef, design, outcome, solver = "weighted-least-sq")
+    take_one_newton_step(logit_model, init_coef, solver = "weighted-least-sq")
   ne_updated_coef <- 
-    take_one_newton_step(init_coef, design, outcome, solver = "normal-eq")
+    take_one_newton_step(logit_model, init_coef, solver = "normal-eq")
   expect_true(are_all_close(wls_updated_coef, ne_updated_coef))
 })
 
