@@ -31,7 +31,7 @@ test_that("vanilla/weighted least-sq Newton updates coincide", {
   set.seed(615)
   init_coef <- rnorm(n_pred)
   wls_updated_coef <- 
-    take_one_newton_step(init_coef, design, outcome, solver = "weighted-leqst-sq")
+    take_one_newton_step(init_coef, design, outcome, solver = "weighted-least-sq")
   ne_updated_coef <- 
     take_one_newton_step(init_coef, design, outcome, solver = "normal-eq")
   expect_true(are_all_close(wls_updated_coef, ne_updated_coef))

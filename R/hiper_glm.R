@@ -65,9 +65,9 @@ solve_via_newton <- function(design, outcome, n_max_iter, rel_tol, abs_tol) {
 }
 
 take_one_newton_step <- function(
-    coef_est, design, outcome, solver = "weighted-leqst-sq"
+    coef_est, design, outcome, solver = "weighted-least-sq"
 ) {
-  if (solver == "weighted-leqst-sq") {
+  if (solver == "weighted-least-sq") {
     loglink_grad <- 
       calc_logit_loglink_deriv(coef_est, design, outcome, order = 1)
     weight <- calc_logit_loglink_deriv(coef_est, design, outcome, order = 2)
