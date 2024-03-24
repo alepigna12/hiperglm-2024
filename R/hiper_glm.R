@@ -10,7 +10,7 @@ hiper_glm <- function(design, outcome, model = "linear", option = list()) {
 }
 
 find_mle <- function(design, outcome, model, option) {
-  if (is.null(option$mle_solver)) {
+  if (is.null(option$mle_solver) || option$mle_solver == "newton") {
     if (model == 'linear') {
       result <- solve_via_least_sq(design, outcome)
     } else {
@@ -18,8 +18,10 @@ find_mle <- function(design, outcome, model, option) {
         design, outcome, option$n_max_iter, option$rel_tol, option$abs_tol
       )
     }
-  } else {
+  } else if (option$mle_solver %in% c("BFGS", "CG", "L-BFGS-B")) {
     result <- solve_via_optim(design, outcome, model, option$mle_solver)
+  } else {
+    stop("Unsupported MLE solver type.")
   }
   return(result)
 }
@@ -78,10 +80,12 @@ take_one_newton_step <- function(
     }
     ls_target_vec <- loglink_grad / weight
     coef_update <- solve_least_sq_via_qr(design, ls_target_vec, weight)$solution
-  } else {
+  } else if (solver == "normal-eq") {
     grad <- calc_logit_grad(coef_est, design, outcome)
     hess <- calc_logit_hessian(coef_est, design, outcome)
     coef_update <- - solve(hess, grad)
+  } else {
+    stop("Unsupported solver type.")
   }
   coef_est <- coef_est + coef_update
   return(coef_est)
