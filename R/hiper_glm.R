@@ -4,22 +4,29 @@ hiper_glm <- function(design, outcome, model_name = "linear", option = list()) {
   if (!(model_name %in% supported_model)) {
     stop(sprintf("The model %s is not supported.", model_name))
   }
-  hglm_out <- find_mle(design, outcome, model_name, option)
+  model <- new_regression_model(design, outcome, model_name)
+  hglm_out <- find_mle(model, option)
   class(hglm_out) <- "hglm"
   return(hglm_out)
 }
 
-find_mle <- function(design, outcome, model_name, option) {
+new_regression_model <- function(design, outcome, model_name) {
+  model <- list(design = design, outcome = outcome, name = model_name)
+  class(model) <- paste(model_name, "model", sep = "_")
+  return(model)
+}
+
+find_mle <- function(model, option) {
   if (is.null(option$mle_solver) || option$mle_solver == "newton") {
-    if (model_name == 'linear') {
-      result <- solve_via_least_sq(design, outcome)
+    if (model$name == 'linear') {
+      result <- solve_via_least_sq(model$design, model$outcome)
     } else {
       result <- solve_via_newton(
-        design, outcome, option$n_max_iter, option$rel_tol, option$abs_tol
+        model$design, model$outcome, option$n_max_iter, option$rel_tol, option$abs_tol
       )
     }
   } else if (option$mle_solver %in% c("BFGS", "CG", "L-BFGS-B")) {
-    result <- solve_via_optim(design, outcome, model_name, option$mle_solver)
+    result <- solve_via_optim(model$design, model$outcome, model$name, option$mle_solver)
   } else {
     stop("Unsupported MLE solver type.")
   }
