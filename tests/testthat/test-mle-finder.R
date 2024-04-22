@@ -1,11 +1,11 @@
 get_default_and_bfgs_optimizer_outputs <- function(
-  model, n_obs = 32, n_pred = 4, data_seed = 1918
+  model_name, n_obs = 32, n_pred = 4, data_seed = 1918
 ) {
-  data <- simulate_data(n_obs, n_pred, model, seed = data_seed)
+  data <- simulate_data(n_obs, n_pred, model_name, seed = data_seed)
   design <- data$design; outcome <- data$outcome
-  via_default_out <- hiper_glm(design, outcome, model)
+  via_default_out <- hiper_glm(design, outcome, model_name)
   via_bfgs_out <- hiper_glm(
-    design, outcome, model, option = list(mle_solver = 'BFGS')
+    design, outcome, model_name, option = list(mle_solver = 'BFGS')
   )
   return(list(via_default = via_default_out, via_bfgs = via_bfgs_out))
 }
@@ -26,7 +26,7 @@ test_that("newton and bfgs outputs coincide on logit model", {
 
 test_that("vanilla/weighted least-sq Newton updates coincide", {
   n_obs <- 32; n_pred <- 4
-  data <- simulate_data(n_obs, n_pred, model = 'logit', seed = 1918)
+  data <- simulate_data(n_obs, n_pred, model_name = 'logit', seed = 1918)
   design <- data$design; outcome <- data$outcome
   set.seed(615)
   init_coef <- rnorm(n_pred)

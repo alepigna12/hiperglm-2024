@@ -1,8 +1,8 @@
 compare_analytical_and_numerical_grad <- function(
-  model, n_obs = 32, n_pred = 4, n_test = 10, data_seed = 1918, loc_seed = 615
+  model_name, n_obs = 32, n_pred = 4, n_test = 10, data_seed = 1918, loc_seed = 615
 ) {
   n_obs <- 32; n_pred <- 4
-  data <- simulate_data(n_obs, n_pred, model, seed = data_seed)
+  data <- simulate_data(n_obs, n_pred, model_name, seed = data_seed)
   design <- data$design; outcome <- data$outcome
   # The `do.call` trick below might seem like a clever solution and a 
   # simpler-to-implement alternative to S3 methods. However, it tends to make 
@@ -14,13 +14,13 @@ compare_analytical_and_numerical_grad <- function(
   # purpose --- I advise against its use in general.
   loglik_func <- function (coef) { 
     do.call(
-      sprintf("calc_%s_loglik", model), 
+      sprintf("calc_%s_loglik", model_name), 
       list(coef, design, outcome)
     )
   }
   grad_func <- function (coef) {
     do.call(
-      sprintf("calc_%s_grad", model), 
+      sprintf("calc_%s_grad", model_name), 
       list(coef, design, outcome)
     )
   }

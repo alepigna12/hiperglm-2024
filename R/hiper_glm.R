@@ -1,17 +1,17 @@
 #' @export
-hiper_glm <- function(design, outcome, model = "linear", option = list()) {
+hiper_glm <- function(design, outcome, model_name = "linear", option = list()) {
   supported_model <- c("linear", "logit")
-  if (!(model %in% supported_model)) {
-    stop(sprintf("The model %s is not supported.", model))
+  if (!(model_name %in% supported_model)) {
+    stop(sprintf("The model %s is not supported.", model_name))
   }
-  hglm_out <- find_mle(design, outcome, model, option)
+  hglm_out <- find_mle(design, outcome, model_name, option)
   class(hglm_out) <- "hglm"
   return(hglm_out)
 }
 
-find_mle <- function(design, outcome, model, option) {
+find_mle <- function(design, outcome, model_name, option) {
   if (is.null(option$mle_solver) || option$mle_solver == "newton") {
-    if (model == 'linear') {
+    if (model_name == 'linear') {
       result <- solve_via_least_sq(design, outcome)
     } else {
       result <- solve_via_newton(
@@ -19,7 +19,7 @@ find_mle <- function(design, outcome, model, option) {
       )
     }
   } else if (option$mle_solver %in% c("BFGS", "CG", "L-BFGS-B")) {
-    result <- solve_via_optim(design, outcome, model, option$mle_solver)
+    result <- solve_via_optim(design, outcome, model_name, option$mle_solver)
   } else {
     stop("Unsupported MLE solver type.")
   }
@@ -91,9 +91,9 @@ take_one_newton_step <- function(
   return(coef_est)
 }
 
-solve_via_optim <- function(design, outcome, model, method) {
+solve_via_optim <- function(design, outcome, model_name, method) {
   init_coef <- rep(0, ncol(design))
-  if (model == 'linear') {
+  if (model_name == 'linear') {
     obj_fn <- function (coef) {
       calc_linear_loglik(coef, design, outcome) 
     }
