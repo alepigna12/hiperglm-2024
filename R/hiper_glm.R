@@ -10,12 +10,6 @@ hiper_glm <- function(design, outcome, model_name = "linear", option = list()) {
   return(hglm_out)
 }
 
-new_regression_model <- function(design, outcome, model_name) {
-  model <- list(design = design, outcome = outcome, name = model_name)
-  class(model) <- paste(model_name, "model", sep = "_")
-  return(model)
-}
-
 find_mle <- function(model, option) {
   if (is.null(option$mle_solver) || option$mle_solver == "newton") {
     if (model$name == 'linear') {
