@@ -84,7 +84,7 @@ take_one_newton_step <- function(
     coef_update <- - solve(hess, grad)
   }
   coef_est <- coef_est + coef_update
-  return(coef_est = coef_est)
+  return(coef_est)
 }
 
 solve_via_optim <- function(design, outcome, model, method) {
