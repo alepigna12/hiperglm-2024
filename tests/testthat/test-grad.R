@@ -31,3 +31,25 @@ test_that("logit model's analytical gradient is close to numerical one", {
     compare_analytical_and_numerical_grad("logit")
   )
 })
+
+test_that("subset grad of full data coincide with full grad of subset data", {
+  
+  n_obs <- 16; subset_size <- 5; n_pred <- 4
+  set.seed(615)
+  coef <- rnorm(n_pred)
+  subset_ind <- sample.int(n_obs, size = subset_size)
+  
+  for (model_name in c("linear", "logit")) {
+    data <- simulate_data(n_obs, n_pred, model_name, seed = 1918)
+    design <- data$design; outcome <- data$outcome
+    
+    model <- new_regression_model(design, outcome, model_name)
+    sub_model <- new_regression_model(
+      design[subset_ind, ], outcome[subset_ind], model_name
+    )
+    expect_true(are_all_close(
+      calc_grad(model, coef, subset_ind), 
+      calc_grad(sub_model, coef, NULL)
+    ))
+  }
+})
