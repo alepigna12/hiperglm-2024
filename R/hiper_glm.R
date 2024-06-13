@@ -21,6 +21,8 @@ find_mle <- function(model, option) {
     }
   } else if (option$mle_solver %in% c("BFGS", "CG", "L-BFGS-B")) {
     result <- solve_via_optim(model, option$mle_solver)
+  } else if (option$mle_solver == "SGD") {
+    result <- solve_via_SGD(model, option$n_batch, option$stepsize, option$n_epoch, option$subsample_with_replacement)
   } else {
     stop("Unsupported MLE solver type.")
   }
@@ -106,4 +108,24 @@ solve_via_optim <- function(model, method) {
     warning("Optimization did not converge. The estimates may be meaningless.")
   }
   return(list(coef = optim_result$par))
+}
+
+solve_via_SGD <- function(model, n_batch, stepsize, n_epoch, replacement=FALSE) {
+  n_obs <- length(model$outcome)
+  n_pred <- ncol(model$design)
+  coef_est <- rep(0, n_pred)
+  for (epoch in 1:n_epoch) {
+    rand_indices <- sample.int(n_obs, size = n_obs, replace = replacement)
+    batch_cum_size <- floor(seq(0, n_obs, length.out = n_batch + 1L))
+    subset_ind_per_batch <- lapply(
+      1:n_batch,
+      function(i) rand_indices[(batch_cum_size[i] + 1):batch_cum_size[i + 1]]
+    )
+    for(batch in 1:n_batch){
+      row_index <- subset_ind_per_batch[[batch]]
+      n_sub <- length(row_index)
+      coef_est <- coef_est + stepsize / n_sub * calc_grad(model, coef_est)
+    }
+  }
+  return(list(coef = coef_est))
 }
