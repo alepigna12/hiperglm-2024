@@ -30,6 +30,7 @@ matvec_by_design_transp <- function(model, w, subset_ind = NULL) {
     return(as.vector(t(w) %*% model$design))  
   }
   else {
-    return(transpose_row_subset_matvec(model$design, w, subset_ind))
+    return(t(model$design[subset_ind,]) %*% w)
+    #return(transpose_row_subset_matvec(model$design, w, subset_ind))
   }
 }
