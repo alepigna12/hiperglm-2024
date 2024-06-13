@@ -16,10 +16,14 @@ get_logit_outcome_pair <- function(model) {
   return(list(n_success = n_success, n_trial = n_trial))
 }
 
-matvec_by_design <- function(model, v) {
-  return(as.vector(model$design %*% v))
+matvec_by_design <- function(model, v, subset_ind = NULL) {
+  if (is.null(subset_ind)) {
+    return(as.vector(model$design %*% v))  
+  }
 }
 
-matvec_by_design_transp <- function(model, w) {
-  return(as.vector(t(w) %*% model$design))
+matvec_by_design_transp <- function(model, w, subset_ind = NULL) {
+  if (is.null(subset_ind)) {
+    return(as.vector(t(w) %*% model$design))  
+  }
 }
