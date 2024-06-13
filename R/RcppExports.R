@@ -5,3 +5,11 @@ solve_least_sq_via_qr_cpp_eig <- function(X, y) {
     .Call(`_hiperglm_solve_least_sq_via_qr_cpp_eig`, X, y)
 }
 
+row_subset_matvec_via_transpose <- function(tA, v, row_index) {
+    .Call(`_hiperglm_row_subset_matvec_via_transpose`, tA, v, row_index)
+}
+
+transpose_row_subset_matvec <- function(A, v, row_index) {
+    .Call(`_hiperglm_transpose_row_subset_matvec`, A, v, row_index)
+}
+

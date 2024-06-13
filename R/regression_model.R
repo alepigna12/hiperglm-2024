@@ -20,10 +20,16 @@ matvec_by_design <- function(model, v, subset_ind = NULL) {
   if (is.null(subset_ind)) {
     return(as.vector(model$design %*% v))  
   }
+  else {
+    return(row_subset_matvec_via_transpose(t(model$design), v, subset_ind))
+  }
 }
 
 matvec_by_design_transp <- function(model, w, subset_ind = NULL) {
   if (is.null(subset_ind)) {
     return(as.vector(t(w) %*% model$design))  
+  }
+  else {
+    return(transpose_row_subset_matvec(model$design, w, subset_ind))
   }
 }
