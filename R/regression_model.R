@@ -1,5 +1,5 @@
 new_regression_model <- function(design, outcome, model_name) {
-  model <- list(design = design, outcome = outcome, name = model_name)
+  model <- list(design = design, outcome = outcome, name = model_name, design_transpose = t(design))
   class(model) <- paste(model_name, "model", sep = "_")
   return(model)
 }
@@ -21,7 +21,7 @@ matvec_by_design <- function(model, v, subset_ind = NULL) {
     return(as.vector(model$design %*% v))  
   }
   else {
-    return(row_subset_matvec_via_transpose(t(model$design), v, subset_ind))
+    return(row_subset_matvec_via_transpose(model$design_transpose, v, subset_ind))
   }
 }
 
