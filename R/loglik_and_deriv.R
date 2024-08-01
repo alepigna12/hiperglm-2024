@@ -14,14 +14,12 @@ calc_loglik.linear_model <- function(model, reg_coef, noise_var = 1) {
 }
 
 calc_loglink_deriv.linear_model <- function(model, reg_coef, order, noise_var = 1, subset_ind = NULL) {
-  if (!is.null(subset_ind)) {
-    model$outcome <- model$outcome[subset_ind]
-  }
+  outcome <- get_outcome(model, subset_ind)
   if (order > 1) {
     stop("2nd+ order derivative calculations are not supported for linear models")
   }
   predicted_val <- matvec_by_design(model, reg_coef, subset_ind)
-  deriv <- (model$outcome - predicted_val) / noise_var
+  deriv <- (outcome - predicted_val) / noise_var
   deriv <- as.vector(deriv)
   return(deriv)
 }
@@ -37,10 +35,7 @@ calc_loglik.logit_model <- function(model, reg_coef) {
 }
 
 calc_loglink_deriv.logit_model <- function(model, reg_coef, order, subset_ind = NULL) {
-  if (!is.null(subset_ind)) {
-    model$outcome <- model$outcome[subset_ind]
-  }
-  outcome_pair <- get_logit_outcome_pair(model)
+  outcome_pair <- get_logit_outcome_pair(model, subset_ind)
   n_success <- outcome_pair$n_success
   n_trial <- outcome_pair$n_trial
   logit_prob <- matvec_by_design(model, reg_coef, subset_ind)
