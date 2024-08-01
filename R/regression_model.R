@@ -4,7 +4,7 @@ new_regression_model <- function(design, outcome, model_name) {
   return(model)
 }
 
-get_logit_outcome_pair <- function(model, subset_ind) {
+get_logit_outcome_pair <- function(model, subset_ind = NULL) {
   outcome <- get_outcome(model, subset_ind)
   if (is.list(outcome)) {
     n_success <- outcome$n_success
@@ -30,8 +30,7 @@ matvec_by_design_transp <- function(model, w, subset_ind = NULL) {
     return(as.vector(t(w) %*% model$design))  
   }
   else {
-    return(t(model$design[subset_ind,]) %*% w)
-    #return(transpose_row_subset_matvec(model$design, w, subset_ind))
+    return(transpose_row_subset_matvec(model$design, w, subset_ind))
   }
 }
 
