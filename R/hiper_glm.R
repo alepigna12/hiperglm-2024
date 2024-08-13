@@ -122,9 +122,9 @@ solve_via_SGD <- function(model, n_batch, stepsize, n_epoch, replacement=FALSE) 
       function(i) rand_indices[(batch_cum_size[i] + 1):batch_cum_size[i + 1]]
     )
     for(batch in 1:n_batch){
-      row_index <- subset_ind_per_batch[[batch]]
-      n_sub <- length(row_index)
-      coef_est <- coef_est + stepsize / n_sub * calc_grad(model, coef_est)
+      subset_index <- subset_ind_per_batch[[batch]]
+      n_sub <- length(subset_index)
+      coef_est <- coef_est + stepsize / n_sub * calc_grad(model, coef_est, subset_index)
     }
   }
   return(list(coef = coef_est))
