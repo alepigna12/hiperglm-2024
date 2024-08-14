@@ -21,19 +21,19 @@ VectorXd row_subset_matvec_via_transpose(
 }
 
 
-// Compute matrix-vector product t(A[row_index, ]) %*% v, but using A as an input.
+// Compute matrix-vector product t(A[row_index, ]) %*% v, using tA as an input.
 // [[Rcpp::export]]
-VectorXd transpose_row_subset_matvec(
-    const Map<MatrixXd> A, const Map<VectorXd> v, IntegerVector row_index
+VectorXd col_subset_matvec(
+    const Map<MatrixXd> tA, const Map<VectorXd> v, IntegerVector row_index
 ) {
-  int num_rows = row_index.size();
-  int dim_result = A.cols();
+  int num_cols = row_index.size();
+  int dim_result = tA.rows();
   VectorXd result = VectorXd::Zero(dim_result);
-  for (int i = 0; i < num_rows; i++) {
-    int row = row_index[i] - 1; 
-    VectorXd row_vector = A.row(row);
+  for (int i = 0; i < num_cols; i++) {
+    int col = row_index[i] - 1; 
+    VectorXd col_vector = tA.col(col);
     
-    result += row_vector * v(i);
+    result += col_vector * v(i);
   }
   return result;
 }
