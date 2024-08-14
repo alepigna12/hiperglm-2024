@@ -38,15 +38,15 @@ BEGIN_RCPP
 END_RCPP
 }
 // col_subset_matvec
-VectorXd col_subset_matvec(const Map<MatrixXd> tA, const Map<VectorXd> v, IntegerVector row_index);
-RcppExport SEXP _hiperglm_col_subset_matvec(SEXP tASEXP, SEXP vSEXP, SEXP row_indexSEXP) {
+VectorXd col_subset_matvec(const Map<MatrixXd> tA, const Map<VectorXd> v, IntegerVector col_index);
+RcppExport SEXP _hiperglm_col_subset_matvec(SEXP tASEXP, SEXP vSEXP, SEXP col_indexSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< const Map<MatrixXd> >::type tA(tASEXP);
     Rcpp::traits::input_parameter< const Map<VectorXd> >::type v(vSEXP);
-    Rcpp::traits::input_parameter< IntegerVector >::type row_index(row_indexSEXP);
-    rcpp_result_gen = Rcpp::wrap(col_subset_matvec(tA, v, row_index));
+    Rcpp::traits::input_parameter< IntegerVector >::type col_index(col_indexSEXP);
+    rcpp_result_gen = Rcpp::wrap(col_subset_matvec(tA, v, col_index));
     return rcpp_result_gen;
 END_RCPP
 }

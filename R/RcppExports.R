@@ -9,7 +9,7 @@ row_subset_matvec_via_transpose <- function(tA, v, row_index) {
     .Call(`_hiperglm_row_subset_matvec_via_transpose`, tA, v, row_index)
 }
 
-col_subset_matvec <- function(tA, v, row_index) {
-    .Call(`_hiperglm_col_subset_matvec`, tA, v, row_index)
+col_subset_matvec <- function(tA, v, col_index) {
+    .Call(`_hiperglm_col_subset_matvec`, tA, v, col_index)
 }
 
