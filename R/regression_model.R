@@ -16,21 +16,41 @@ get_logit_outcome_pair <- function(model, subset_ind = NULL) {
   return(list(n_success = n_success, n_trial = n_trial))
 }
 
-matvec_by_design <- function(model, v, subset_ind = NULL) {
+matvec_by_design <- function(model, v, subset_ind = NULL, via_transp = NULL, use_rcpp = NULL) {
   if (is.null(subset_ind)) {
     return(as.vector(model$design %*% v))  
   }
   else {
-    return(row_subset_matvec_via_transpose(model$design_transpose, v, subset_ind))
+    if (via_transp) {
+      if (use_rcpp) {
+        return(row_subset_matvec_via_transpose(model$design_transpose, v, subset_ind))
+      }
+      else {
+        return(as.matrix(colSums(model$design_transpose[, subset_ind] * b)))
+      }
+    }
+    else {
+      if (use_rcpp) {
+        return(row_subset_matvec(model$design, v, subset_ind))
+      }
+      else {
+        return(model$design[subset_ind, ] %*% v)
+      }
+    }
   }
 }
 
-matvec_by_design_transp <- function(model, w, subset_ind = NULL) {
+matvec_by_design_transp <- function(model, w, subset_ind = NULL, use_rcpp = NULL) {
   if (is.null(subset_ind)) {
     return(as.vector(t(w) %*% model$design))  
   }
   else {
-    return(col_subset_matvec(model$design_transpose, w, subset_ind))
+    if (use_rcpp) {
+      return(col_subset_matvec(model$design_transpose, w, subset_ind))
+    }
+    else {
+      return(model$design_transpose[, subset_ind] %*% w)
+    }
   }
 }
 

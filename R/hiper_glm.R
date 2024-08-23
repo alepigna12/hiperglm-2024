@@ -22,7 +22,7 @@ find_mle <- function(model, option) {
   } else if (option$mle_solver %in% c("BFGS", "CG", "L-BFGS-B")) {
     result <- solve_via_optim(model, option$mle_solver)
   } else if (option$mle_solver == "SGD") {
-    result <- solve_via_SGD(model, option$n_batch, option$stepsize, option$n_epoch, option$subsample_with_replacement)
+    result <- solve_via_SGD(model, option$n_batch, option$stepsize, option$n_epoch, option$subsample_with_replacement, option$use_matvec_via_transp, option$use_cpp_matvec)
   } else {
     stop("Unsupported MLE solver type.")
   }
@@ -110,7 +110,7 @@ solve_via_optim <- function(model, method) {
   return(list(coef = optim_result$par))
 }
 
-solve_via_SGD <- function(model, n_batch, stepsize, n_epoch, replacement=FALSE) {
+solve_via_SGD <- function(model, n_batch, stepsize, n_epoch, replacement=FALSE, via_transp=TRUE, use_rcpp=TRUE) {
   n_obs <- length(model$outcome)
   n_pred <- ncol(model$design)
   coef_est <- rep(0, n_pred)
@@ -124,7 +124,7 @@ solve_via_SGD <- function(model, n_batch, stepsize, n_epoch, replacement=FALSE) 
     for(batch in 1:n_batch){
       subset_index <- subset_ind_per_batch[[batch]]
       n_sub <- length(subset_index)
-      coef_est <- coef_est + stepsize / n_sub * calc_grad(model, coef_est, subset_index)
+      coef_est <- coef_est + stepsize / n_sub * calc_grad(model, coef_est, subset_index, via_transp, use_rcpp)
     }
   }
   return(list(coef = coef_est))
