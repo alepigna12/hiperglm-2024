@@ -53,7 +53,7 @@ calc_loglink_deriv.logit_model <- function(model, reg_coef, order, subset_ind = 
 
 calc_grad <- function(model, reg_coef, subset_ind = NULL, via_transp = TRUE, use_rcpp = TRUE, ...) {
   loglink_grad <- calc_loglink_deriv(model, reg_coef, order = 1, subset_ind = subset_ind, via_transp = via_transp, use_rcpp = use_rcpp, ...)
-  grad <- matvec_by_design_transp(model, loglink_grad, subset_ind = subset_ind, use_rcpp = use_rcpp)
+  grad <- matvec_by_design_transp(model, loglink_grad, subset_ind = subset_ind, via_transp = via_transp, use_rcpp = use_rcpp)
   return(grad)
 }
 

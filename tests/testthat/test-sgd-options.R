@@ -3,15 +3,16 @@ compare_grad_between_options <- function(
 ) {
   data <- simulate_data(n_obs, n_pred, model_name, seed = data_seed)
   design <- data$design; outcome <- data$outcome
-  model <- new_regression_model(design, outcome, model_name)
+  first_model <- new_regression_model(design, outcome, model_name, SGD_solver = TRUE, option_selection_1$via_transp)
+  second_model <- new_regression_model(design, outcome, model_name, SGD_solver = TRUE, option_selection_2$via_transp)
   set.seed(loc_seed)
   grads_are_close <- TRUE
   for (i in 1:n_test) {
     if (!grads_are_close) break
     regcoef <- rnorm(n_pred)
     subset_ind <- sample.int(n_obs, 0.5*n_obs)
-    first_option_grad <- calc_grad(model, regcoef, subset_ind, option_selection_1$via_transp, option_selection_1$use_rcpp)
-    second_option_grad <- calc_grad(model, regcoef, subset_ind, option_selection_2$via_transp, option_selection_2$use_rcpp)
+    first_option_grad <- calc_grad(first_model, regcoef, subset_ind, option_selection_1$via_transp, option_selection_1$use_rcpp)
+    second_option_grad <- calc_grad(second_model, regcoef, subset_ind, option_selection_2$via_transp, option_selection_2$use_rcpp)
     grads_are_close <- are_all_close(
       first_option_grad, second_option_grad, abs_tol = Inf, rel_tol = 1e-3
     )

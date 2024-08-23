@@ -1,5 +1,12 @@
-new_regression_model <- function(design, outcome, model_name) {
-  model <- list(design = design, outcome = outcome, name = model_name, design_transpose = t(design))
+new_regression_model <- function(design, outcome, model_name, SGD_solver = FALSE, via_transp = TRUE) {
+  n_obs <- nrow(design)
+  n_pred <- ncol(design)
+  if (SGD_solver & via_transp) {
+    model <- list(design_transpose = t(design), outcome = outcome, name = model_name, n_obs = n_obs, n_pred = n_pred)   
+  }
+  else {
+    model <- list(design = design, outcome = outcome, name = model_name, n_obs = n_obs, n_pred = n_pred)
+  }
   class(model) <- paste(model_name, "model", sep = "_")
   return(model)
 }
@@ -40,16 +47,27 @@ matvec_by_design <- function(model, v, subset_ind = NULL, via_transp = TRUE, use
   }
 }
 
-matvec_by_design_transp <- function(model, w, subset_ind = NULL, use_rcpp = TRUE) {
+matvec_by_design_transp <- function(model, w, subset_ind = NULL, via_transp = TRUE, use_rcpp = TRUE) {
   if (is.null(subset_ind)) {
     return(as.vector(t(w) %*% model$design))  
   }
   else {
-    if (use_rcpp) {
-      return(col_subset_matvec(model$design_transpose, w, subset_ind))
+    if (via_transp) {
+      if (use_rcpp) {
+        return(col_subset_matvec(model$design_transpose, w, subset_ind))
+      }
+      else {
+        return(model$design_transpose[, subset_ind] %*% w)
+      }  
     }
     else {
-      return(model$design_transpose[, subset_ind] %*% w)
+      design_transpose <- t(model$design)
+      if (use_rcpp) {
+        return(col_subset_matvec(design_transpose, w, subset_ind))
+      }
+      else {
+        return(design_transpose[, subset_ind] %*% w)
+      }
     }
   }
 }

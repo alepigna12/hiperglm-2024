@@ -43,7 +43,7 @@ test_that("subset grad of full data coincide with full grad of subset data", {
     data <- simulate_data(n_obs, n_pred, model_name, seed = 1918)
     design <- data$design; outcome <- data$outcome
     
-    model <- new_regression_model(design, outcome, model_name)
+    model <- new_regression_model(design, outcome, model_name, SGD_solver = TRUE)
     sub_model <- new_regression_model(
       design[subset_ind, ], outcome[subset_ind], model_name
     )
