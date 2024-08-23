@@ -1,7 +1,6 @@
 compare_grad_between_options <- function(
     model_name, option_selection_1 = list(), option_selection_2 = list(), n_obs = 32, n_pred = 4, n_test = 10, data_seed = 1918, loc_seed = 615
 ) {
-  n_obs <- 32; n_pred <- 4
   data <- simulate_data(n_obs, n_pred, model_name, seed = data_seed)
   design <- data$design; outcome <- data$outcome
   model <- new_regression_model(design, outcome, model_name)

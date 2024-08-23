@@ -26,7 +26,7 @@ matvec_by_design <- function(model, v, subset_ind = NULL, via_transp = TRUE, use
         return(row_subset_matvec_via_transpose(model$design_transpose, v, subset_ind))
       }
       else {
-        return(as.matrix(colSums(model$design_transpose[, subset_ind] * v)))
+        return(as.matrix(colSums(model$design_transpose[, subset_ind] * as.vector(v))))
       }
     }
     else {
