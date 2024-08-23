@@ -1,4 +1,19 @@
-test_that("Effficient Rcpp implementation of row subset matvec coincides with base R result", {
+test_that("Rcpp implementation of row subset matvec coincides with base R result", {
+  set.seed(111)
+  
+  n <- 10^4; m <- 10; subset_frac = 0.1
+  A <- matrix(rnorm(n * m), n, m)
+  b <- rnorm(m)
+  row_index <- sample.int(n, subset_frac * n)
+  
+  expect_true(are_all_close(
+    A[row_index, ] %*% b,
+    row_subset_matvec(A, b, row_index)
+  ))
+})
+
+
+test_that("Effficient Rcpp implementation of row subset matvec via transpose coincides with base R result", {
   set.seed(111)
   
   n <- 10^4; m <- 10; subset_frac = 0.1

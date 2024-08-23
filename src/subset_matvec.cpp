@@ -6,6 +6,21 @@ using Eigen::VectorXd;
 using Rcpp::IntegerVector;
 
 
+// Compute matrix-vector product A[row_index, ] %*% v
+// [[Rcpp::export]]
+VectorXd row_subset_matvec(
+    const Map<MatrixXd> A, const Map<VectorXd> v, IntegerVector row_index
+) {
+  int num_rows = row_index.size();
+  VectorXd result = VectorXd::Zero(num_rows);
+  for (int i = 0; i < num_rows; i++) {
+    int row = row_index[i] - 1;
+    result(i) = A.row(row).dot(v);
+  }
+  return result;
+}
+
+
 // Compute matrix-vector product A[row_index, ] %*% v, but using t(A) as an input.
 // [[Rcpp::export]]
 VectorXd row_subset_matvec_via_transpose(

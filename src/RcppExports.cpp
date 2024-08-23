@@ -24,6 +24,19 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// row_subset_matvec
+VectorXd row_subset_matvec(const Map<MatrixXd> A, const Map<VectorXd> v, IntegerVector row_index);
+RcppExport SEXP _hiperglm_row_subset_matvec(SEXP ASEXP, SEXP vSEXP, SEXP row_indexSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const Map<MatrixXd> >::type A(ASEXP);
+    Rcpp::traits::input_parameter< const Map<VectorXd> >::type v(vSEXP);
+    Rcpp::traits::input_parameter< IntegerVector >::type row_index(row_indexSEXP);
+    rcpp_result_gen = Rcpp::wrap(row_subset_matvec(A, v, row_index));
+    return rcpp_result_gen;
+END_RCPP
+}
 // row_subset_matvec_via_transpose
 VectorXd row_subset_matvec_via_transpose(const Map<MatrixXd> tA, const Map<VectorXd> v, IntegerVector row_index);
 RcppExport SEXP _hiperglm_row_subset_matvec_via_transpose(SEXP tASEXP, SEXP vSEXP, SEXP row_indexSEXP) {
@@ -53,6 +66,7 @@ END_RCPP
 
 static const R_CallMethodDef CallEntries[] = {
     {"_hiperglm_solve_least_sq_via_qr_cpp_eig", (DL_FUNC) &_hiperglm_solve_least_sq_via_qr_cpp_eig, 2},
+    {"_hiperglm_row_subset_matvec", (DL_FUNC) &_hiperglm_row_subset_matvec, 3},
     {"_hiperglm_row_subset_matvec_via_transpose", (DL_FUNC) &_hiperglm_row_subset_matvec_via_transpose, 3},
     {"_hiperglm_col_subset_matvec", (DL_FUNC) &_hiperglm_col_subset_matvec, 3},
     {NULL, NULL, 0}
