@@ -12,7 +12,7 @@ hiper_glm <- function(design, outcome, model_name = "linear", option = list()) {
   if (is.null(option$use_matvec_via_transp)){
     via_transp = FALSE
   } else {
-    via_transp = use_matvec_via_transp
+    via_transp = option$use_matvec_via_transp
   }
   model <- new_regression_model(design, outcome, model_name, SGD_solver, via_transp)
   hglm_out <- find_mle(model, option)
