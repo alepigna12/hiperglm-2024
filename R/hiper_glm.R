@@ -9,12 +9,6 @@ hiper_glm <- function(design, outcome, model_name = "linear", option = list()) {
   } else {
     SGD_solver = (option$mle_solver == "SGD")
   }
-  if (is.null(option$use_matvec_via_transp)){
-    option$use_matvec_via_transp = TRUE
-  }
-  if (is.null(option$use_cpp_matvec)){
-    option$use_cpp_matvec = TRUE
-  }
   model <- new_regression_model(design, outcome, model_name, SGD_solver, option$use_matvec_via_transp)
   hglm_out <- find_mle(model, option)
   class(hglm_out) <- "hglm"

@@ -1,6 +1,9 @@
 new_regression_model <- function(design, outcome, model_name, SGD_solver = FALSE, via_transp = TRUE) {
   n_obs <- nrow(design)
   n_pred <- ncol(design)
+  if (is.null(via_transp)) {
+    via_transp = TRUE
+  }
   if (SGD_solver & via_transp) {
     model <- list(design_transpose = t(design), outcome = outcome, name = model_name, n_obs = n_obs, n_pred = n_pred)   
   }
