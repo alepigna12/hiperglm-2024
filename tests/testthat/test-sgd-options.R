@@ -20,12 +20,6 @@ compare_grad_between_options <- function(
   return(grads_are_close)
 }
 
-test_that("Gradients with no option input coincide with gradients with use_matvec_via_transp=TRUE and use_cpp_matvec=TRUE for linear model", {
-  expect_true(
-    compare_grad_between_options("linear", list(via_transp = NULL, use_rcpp = NULL), list(via_transp = TRUE, use_rcpp = TRUE))
-  )
-})
-
 test_that("Gradients with use_matvec_via_transp=TRUE and use_cpp_matvec=TRUE coincide with gradients with use_matvec_via_transp=TRUE and use_cpp_matvec=FALSE for linear model", {
   expect_true(
     compare_grad_between_options("linear", list(via_transp = TRUE, use_rcpp = TRUE), list(via_transp = TRUE, use_rcpp = FALSE))
@@ -41,12 +35,6 @@ test_that("Gradients with use_matvec_via_transp=TRUE and use_cpp_matvec=TRUE coi
 test_that("Gradients with use_matvec_via_transp=TRUE and use_cpp_matvec=TRUE coincide with gradients with use_matvec_via_transp=FALSE and use_cpp_matvec=FALSE for linear model", {
   expect_true(
     compare_grad_between_options("linear", list(via_transp = TRUE, use_rcpp = TRUE), list(via_transp = FALSE, use_rcpp = FALSE))
-  )
-})
-
-test_that("Gradients with no option input coincide with gradients with use_matvec_via_transp=TRUE and use_cpp_matvec=TRUE for logit model", {
-  expect_true(
-    compare_grad_between_options("logit", list(via_transp = NULL, use_rcpp = NULL), list(via_transp = TRUE, use_rcpp = TRUE))
   )
 })
 

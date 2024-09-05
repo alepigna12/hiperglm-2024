@@ -1,9 +1,6 @@
-new_regression_model <- function(design, outcome, model_name, SGD_solver = FALSE, via_transp = TRUE) {
+new_regression_model <- function(design, outcome, model_name, SGD_solver, via_transp) {
   n_obs <- nrow(design)
   n_pred <- ncol(design)
-  if (is.null(via_transp)) {
-    via_transp = TRUE
-  }
   if (SGD_solver & via_transp) {
     model <- list(design_transpose = t(design), outcome = outcome, name = model_name, n_obs = n_obs, n_pred = n_pred)   
   }
@@ -26,7 +23,7 @@ get_logit_outcome_pair <- function(model, subset_ind = NULL) {
   return(list(n_success = n_success, n_trial = n_trial))
 }
 
-matvec_by_design <- function(model, v, subset_ind = NULL, via_transp = TRUE, use_rcpp = TRUE) {
+matvec_by_design <- function(model, v, subset_ind = NULL, via_transp, use_rcpp) {
   if (is.null(subset_ind)) {
     return(as.vector(model$design %*% v))  
   }
@@ -50,7 +47,7 @@ matvec_by_design <- function(model, v, subset_ind = NULL, via_transp = TRUE, use
   }
 }
 
-matvec_by_design_transp <- function(model, w, subset_ind = NULL, via_transp = TRUE, use_rcpp = TRUE) {
+matvec_by_design_transp <- function(model, w, subset_ind = NULL, via_transp, use_rcpp) {
   if (is.null(subset_ind)) {
     return(as.vector(t(w) %*% model$design))  
   }
@@ -75,11 +72,27 @@ matvec_by_design_transp <- function(model, w, subset_ind = NULL, via_transp = TR
   }
 }
 
-get_outcome <- function(model, subset_ind){
+get_outcome <- function(model, subset_ind) {
   if (is.null(subset_ind)) {
     return(model$outcome)  
   }
   else {
     return(model$outcome[subset_ind])
   }
+}
+
+initialize_option <- function(option) {
+  if(is.null(option$mle_solver)) {
+    option$SGD_solver = FALSE
+  }
+  else {
+    option$SGD_solver = (option$mle_solver == "SGD")
+  }
+  if(is.null(option$use_matvec_via_transp)) {
+    option$use_matvec_via_transp = TRUE
+  }
+  if(is.null(option$use_cpp_matvec)) {
+    option$use_cpp_matvec = TRUE
+  }
+  return(option)
 }

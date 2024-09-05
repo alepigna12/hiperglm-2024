@@ -4,12 +4,8 @@ hiper_glm <- function(design, outcome, model_name = "linear", option = list()) {
   if (!(model_name %in% supported_model)) {
     stop(sprintf("The model %s is not supported.", model_name))
   }
-  if (is.null(option$mle_solver)){
-    SGD_solver = FALSE
-  } else {
-    SGD_solver = (option$mle_solver == "SGD")
-  }
-  model <- new_regression_model(design, outcome, model_name, SGD_solver, option$use_matvec_via_transp)
+  option <- initialize_option(option)
+  model <- new_regression_model(design, outcome, model_name, option$SGD_solver, option$use_matvec_via_transp)
   hglm_out <- find_mle(model, option)
   class(hglm_out) <- "hglm"
   return(hglm_out)
@@ -115,7 +111,7 @@ solve_via_optim <- function(model, method) {
   return(list(coef = optim_result$par))
 }
 
-solve_via_SGD <- function(model, n_batch, stepsize, n_epoch, replacement=FALSE, via_transp=TRUE, use_rcpp=TRUE) {
+solve_via_SGD <- function(model, n_batch, stepsize, n_epoch, replacement=FALSE, via_transp, use_rcpp) {
   n_obs <- model$n_obs
   n_pred <- model$n_pred
   coef_est <- rep(0, n_pred)

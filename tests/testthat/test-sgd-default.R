@@ -1,19 +1,14 @@
-is_default_equal_to_option_model <- function(model_name, n_obs = 32, n_pred = 4, data_seed = 1918) {
-  data <- simulate_data(n_obs, n_pred, model_name, seed = data_seed)
-  design <- data$design; outcome <- data$outcome
-  default_model <- new_regression_model(design, outcome, model_name, SGD_solver = TRUE)
-  option_model <- new_regression_model(design, outcome, model_name, SGD_solver = TRUE, via_transp = TRUE)
-  return(identical(default_model, option_model))
-}
-
-test_that("SGD defaults to via_transp=TRUE option, linear model", {
-  expect_true(
-    is_default_equal_to_option_model("linear")
+test_that("SGD defaults to option$use_matvec_via_transp=TRUE and option$use_cpp_matvec=TRUE", {
+  option_default = list(
+    mle_solver = "SGD",
+    n_batch = 100L,
+    stepsize = 0.01,
+    n_epoch = 10,
+    subsample_with_replacement = FALSE
   )
-})
-
-test_that("SGD defaults to via_transp=TRUE options, logit model", {
+  option_default = initialize_option(option_default)
+  
   expect_true(
-    is_default_equal_to_option_model("logit") 
+    option_default$use_matvec_via_transp & option_default$use_cpp_matvec
   )
 })
