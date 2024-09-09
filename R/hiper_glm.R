@@ -5,14 +5,14 @@ hiper_glm <- function(design, outcome, model_name = "linear", option = list()) {
     stop(sprintf("The model %s is not supported.", model_name))
   }
   option <- initialize_option(option)
-  model <- new_regression_model(design, outcome, model_name, option$SGD_solver, option$use_matvec_via_transp)
+  model <- new_regression_model(design, outcome, model_name, option$use_matvec_via_transp)
   hglm_out <- find_mle(model, option)
   class(hglm_out) <- "hglm"
   return(hglm_out)
 }
 
 find_mle <- function(model, option) {
-  if (is.null(option$mle_solver) || option$mle_solver == "newton") {
+  if (option$mle_solver == "newton") {
     if (model$name == 'linear') {
       result <- solve_via_least_sq(model$design, model$outcome)
     } else {

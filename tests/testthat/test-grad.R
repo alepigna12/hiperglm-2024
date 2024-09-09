@@ -4,7 +4,7 @@ compare_analytical_and_numerical_grad <- function(
   n_obs <- 32; n_pred <- 4
   data <- simulate_data(n_obs, n_pred, model_name, seed = data_seed)
   design <- data$design; outcome <- data$outcome
-  model <- new_regression_model(design, outcome, model_name, SGD_solver = FALSE, via_transp = TRUE)
+  model <- new_regression_model(design, outcome, model_name, via_transp = FALSE)
   loglik_func <- function (coef) { calc_loglik(model, coef) }
   set.seed(loc_seed)
   grads_are_close <- TRUE
@@ -43,9 +43,9 @@ test_that("subset grad of full data coincide with full grad of subset data", {
     data <- simulate_data(n_obs, n_pred, model_name, seed = 1918)
     design <- data$design; outcome <- data$outcome
     
-    model <- new_regression_model(design, outcome, model_name, SGD_solver = TRUE, via_transp = TRUE)
+    model <- new_regression_model(design, outcome, model_name, via_transp = TRUE)
     sub_model <- new_regression_model(
-      design[subset_ind, ], outcome[subset_ind], model_name, SGD_solver = FALSE, via_transp = TRUE
+      design[subset_ind, ], outcome[subset_ind], model_name, via_transp = FALSE
     )
     expect_true(are_all_close(
       calc_grad(model, coef, subset_ind, TRUE, TRUE), 

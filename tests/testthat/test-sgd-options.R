@@ -3,8 +3,8 @@ compare_grad_between_options <- function(
 ) {
   data <- simulate_data(n_obs, n_pred, model_name, seed = data_seed)
   design <- data$design; outcome <- data$outcome
-  first_model <- new_regression_model(design, outcome, model_name, SGD_solver = TRUE, option_selection_1$via_transp)
-  second_model <- new_regression_model(design, outcome, model_name, SGD_solver = TRUE, option_selection_2$via_transp)
+  first_model <- new_regression_model(design, outcome, model_name, option_selection_1$via_transp)
+  second_model <- new_regression_model(design, outcome, model_name, option_selection_2$via_transp)
   set.seed(loc_seed)
   grads_are_close <- TRUE
   for (i in 1:n_test) {

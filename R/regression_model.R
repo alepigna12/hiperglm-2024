@@ -1,7 +1,7 @@
-new_regression_model <- function(design, outcome, model_name, SGD_solver, via_transp) {
+new_regression_model <- function(design, outcome, model_name, via_transp) {
   n_obs <- nrow(design)
   n_pred <- ncol(design)
-  if (SGD_solver & via_transp) {
+  if (via_transp) {
     model <- list(design_transpose = t(design), outcome = outcome, name = model_name, n_obs = n_obs, n_pred = n_pred)   
   }
   else {
@@ -33,7 +33,7 @@ matvec_by_design <- function(model, v, subset_ind = NULL, via_transp, use_rcpp) 
         return(row_subset_matvec_via_transpose(model$design_transpose, v, subset_ind))
       }
       else {
-        return(as.matrix(colSums(model$design_transpose[, subset_ind] * as.vector(v))))
+        return(as.vector(t(v) %*% model$design_transpose[, subset_ind]))
       }
     }
     else {
@@ -83,15 +83,18 @@ get_outcome <- function(model, subset_ind) {
 
 initialize_option <- function(option) {
   if(is.null(option$mle_solver)) {
-    option$SGD_solver = FALSE
+    option$mle_solver = "newton"
+  }
+  if (option$mle_solver == "SGD") {
+    if(is.null(option$use_matvec_via_transp)) {
+      option$use_matvec_via_transp = TRUE
+    }
+    if(is.null(option$use_cpp_matvec)) {
+      option$use_cpp_matvec = TRUE
+    }
   }
   else {
-    option$SGD_solver = (option$mle_solver == "SGD")
-  }
-  if(is.null(option$use_matvec_via_transp)) {
-    option$use_matvec_via_transp = TRUE
-  }
-  if(is.null(option$use_cpp_matvec)) {
+    option$use_matvec_via_transp = FALSE
     option$use_cpp_matvec = TRUE
   }
   return(option)

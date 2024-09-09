@@ -9,6 +9,6 @@ test_that("SGD defaults to option$use_matvec_via_transp=TRUE and option$use_cpp_
   option_default = initialize_option(option_default)
   
   expect_true(
-    option_default$use_matvec_via_transp & option_default$use_cpp_matvec
+    option_default$use_matvec_via_transp && option_default$use_cpp_matvec
   )
 })
