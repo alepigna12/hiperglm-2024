@@ -28,7 +28,7 @@ test_that("vanilla/weighted least-sq Newton updates coincide", {
   n_obs <- 32; n_pred <- 4
   data <- simulate_data(n_obs, n_pred, model_name = 'logit', seed = 1918)
   design <- data$design; outcome <- data$outcome
-  logit_model <- new_regression_model(design, outcome, model_name = 'logit')
+  logit_model <- new_regression_model(design, outcome, model_name = 'logit', via_transp = FALSE)
   set.seed(615)
   init_coef <- rnorm(n_pred)
   wls_updated_coef <- 
